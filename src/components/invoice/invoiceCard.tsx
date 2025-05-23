@@ -1,16 +1,16 @@
 import React from "react";
 
-const InvoiceCard = () => {
+const InvoiceCard = ({ invoice, onClick }) => {
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between cursor-pointer" onClick={onClick}>
       <div className="flex-col">
-        <p>#RT3080</p>
-        <p>Due 19 Aug 2021</p>
-        <p>£560.00</p>
+        <p>{invoice.id}</p>
+        <p>Due {invoice.paymentDue}</p>
+        <p>£ {invoice.total.toFixed(2)}</p>
       </div>
       <div className="flex-col">
-        <p>Jensen Huang</p>
-        <p>Paid</p>
+        <p>{invoice.clientName}</p>
+        <p className="capitalize">{invoice.status}</p>
       </div>
     </div>
   );
