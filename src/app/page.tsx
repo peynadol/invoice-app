@@ -1,5 +1,8 @@
-import { Button } from "@/components/ui/button";
-
+import InvoiceToolbar from "@/components/invoice/invoiceToolbar";
 export default function Home() {
-  return <main></main>;
+  return (
+    <div>
+      <InvoiceToolbar />
+    </div>
+  );
 }
