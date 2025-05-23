@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import emptyLogo from "../../../public/illustration-empty.svg";
+// TODO: conditionally render this on empty invoices
 const EmptyInvoices = () => {
   return (
     <div>
