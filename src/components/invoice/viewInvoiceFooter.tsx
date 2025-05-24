@@ -9,9 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useRouter } from "next/navigation";
 import { useInvoiceStore } from "@/store/invoiceStore";
-import { useEffect } from "react";
 
 type Props = {
   invoiceId: string;
