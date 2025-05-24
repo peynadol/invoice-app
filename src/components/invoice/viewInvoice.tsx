@@ -36,13 +36,18 @@ const mockInvoice = {
   total: 556.0,
 };
 
+import { ChevronLeft } from "lucide-react";
+import Link from "next/link";
 import InvoiceStatusCard from "./invoiceStatusCard";
 import OrderCard from "./orderCard";
-import ViewInvoiceFooter from "./viewInvoiceFooter";
 
 const ViewInvoice = () => {
   return (
     <div>
+      <Link href="/invoices" className="flex">
+        <ChevronLeft />
+        Go back
+      </Link>
       <div>
         <InvoiceStatusCard status={mockInvoice.status} />
       </div>
@@ -92,7 +97,6 @@ const ViewInvoice = () => {
 
         {/* Items Section */}
         <OrderCard items={mockInvoice.items} total={mockInvoice.total} />
-        <ViewInvoiceFooter />
       </div>
     </div>
   );

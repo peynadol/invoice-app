@@ -3,8 +3,8 @@ import { Plus } from "lucide-react";
 const AddNewInvoice = () => {
   return (
     <div>
-      <Button className="rounded-full">
-        <Plus className="bg-white rounded-full text-blue-500" />
+      <Button className="rounded-full bg-blue-500 h-full">
+        <Plus className="bg-white rounded-full text-[#7D5DFA]" />
         New
       </Button>
     </div>

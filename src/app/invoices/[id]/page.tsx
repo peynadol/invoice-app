@@ -1,4 +1,3 @@
-// app/invoices/[id]/page.tsx
 import invoices from "../../../data/data.json";
 import ViewInvoice from "@/components/invoice/ViewInvoice";
 import ViewInvoiceFooter from "@/components/invoice/ViewInvoiceFooter";
@@ -10,8 +9,9 @@ type Params = {
   };
 };
 
-export default function InvoiceDetailPage({ params }: Params) {
-  const invoice = invoices.find((inv) => inv.id === params.id);
+export default async function InvoiceDetailPage({ params }: Params) {
+  const awaitedParams = await params;
+  const invoice = invoices.find((inv) => inv.id === awaitedParams.id);
 
   if (!invoice) return notFound();
 
