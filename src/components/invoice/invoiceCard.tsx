@@ -1,7 +1,9 @@
 import React from "react";
 import StatusPill from "./statusPill";
+import formatDate from "@/utils/formaDate";
 
 const InvoiceCard = ({ invoice, onClick }) => {
+  const formattedDueDate = formatDate(invoice.paymentDue);
   return (
     <div
       className="flex justify-between items-center p-4 cursor-pointer bg-white rounded-lg shadow-sm mx-4"
@@ -14,9 +16,15 @@ const InvoiceCard = ({ invoice, onClick }) => {
           {invoice.id}
         </p>
         <p className="text-[#7E88C3] font-semibold text-sm">
-          Due {invoice.paymentDue}
+          Due {formattedDueDate}
         </p>
-        <p className="font-bold">£ {invoice.total.toFixed(2)}</p>
+        <p className="font-bold">
+          £
+          {invoice.total.toLocaleString("en-GB", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </p>
       </div>
 
       {/* Right side */}

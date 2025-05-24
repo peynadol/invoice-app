@@ -1,10 +1,57 @@
-import { Button } from "@/components/ui/button";
+"use client";
 
-const ViewInvoiceFooter = () => {
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useRouter } from "next/navigation";
+import { useInvoiceStore } from "@/store/invoiceStore";
+import { useEffect } from "react";
+
+type Props = {
+  invoiceId: string;
+};
+
+const ViewInvoiceFooter = ({ invoiceId }: Props) => {
+  const deleteInvoice = useInvoiceStore((state) => state.deleteInvoice);
+
+  const handleDelete = () => {
+    deleteInvoice(invoiceId);
+  };
+
   return (
     <div className="flex justify-between gap-2 p-6 bg-background border-t">
       <Button variant="outline">Edit</Button>
-      <Button variant="destructive">Delete</Button>
+
+      {/* Dialog for delete confirmation */}
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="destructive">Delete</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Are you sure you want to delete this invoice? This action cannot be
+            undone.
+          </p>
+          <DialogFooter className="mt-4">
+            <DialogTrigger asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogTrigger>
+            <Button variant="destructive" onClick={handleDelete}>
+              Confirm Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Button className="bg-purple-600 text-white hover:bg-purple-700">
         Mark as Paid
       </Button>

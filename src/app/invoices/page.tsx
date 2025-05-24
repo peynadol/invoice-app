@@ -1,13 +1,14 @@
-'use client';
-import invoices from '../../data/data.json';
-import InvoiceCard from '@/components/invoice/invoiceCard';
-import InvoiceToolbar from '@/components/invoice/invoiceToolbar';
-import EmptyInvoices from '@/components/invoice/emptyInvoices';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+"use client";
+import InvoiceCard from "@/components/invoice/invoiceCard";
+import InvoiceToolbar from "@/components/invoice/invoiceToolbar";
+import EmptyInvoices from "@/components/invoice/emptyInvoices";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useInvoiceStore } from "@/store/invoiceStore";
 
 const InvoiceListPage = () => {
   const router = useRouter();
+  const invoices = useInvoiceStore((state) => state.invoices);
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
 
   const toggleStatus = (status: string) => {
@@ -30,7 +31,7 @@ const InvoiceListPage = () => {
   };
 
   return (
-    <div className='space-y-4'>
+    <div className="space-y-4">
       <InvoiceToolbar
         count={invoices.length}
         selected={selectedStatuses}
