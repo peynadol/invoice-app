@@ -3,7 +3,10 @@ import StatusPill from "./statusPill";
 
 const InvoiceCard = ({ invoice, onClick }) => {
   return (
-    <div className="flex justify-between items-center p-4 cursor-pointer bg-white rounded-lg shadow-sm mx-4">
+    <div
+      className="flex justify-between items-center p-4 cursor-pointer bg-white rounded-lg shadow-sm mx-4"
+      onClick={onClick}
+    >
       {/* Left side */}
       <div className="flex flex-col gap-2">
         <p className="font-bold">

@@ -20,7 +20,13 @@ const OrderCard = ({ items, total }) => {
       {/* Grand Total Bar */}
       <div className="flex justify-between items-center px-6 py-5 bg-[#373A53] text-white">
         <p className="text-sm">Grand Total</p>
-        <p className="text-xl font-bold">£{total.toFixed(2)}</p>
+        <p className="text-xl font-bold">
+          £
+          {total.toLocaleString("en-GB", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </p>
       </div>
     </div>
   );
