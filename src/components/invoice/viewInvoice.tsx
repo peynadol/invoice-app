@@ -4,20 +4,14 @@ import InvoiceStatusCard from "./invoiceStatusCard";
 import OrderCard from "./orderCard";
 import PageContainer from "@/components/layout/PageContainer";
 import formatDate from "../../utils/formaDate";
+import { GoBackBar } from "./goBackBar";
 const ViewInvoice = ({ invoice }) => {
   const createdAt = formatDate(invoice.createdAt);
   const paymentDue = formatDate(invoice.paymentDue);
 
   return (
     <PageContainer>
-      {/* Go back link */}
-      <Link
-        href="/invoices"
-        className="flex items-center gap-2 text-sm font-bold text-primary mb-6 mt-4 hover:underline"
-      >
-        <ChevronLeft size={18} color="#7D5DFA" />
-        Go back
-      </Link>
+      <GoBackBar />
 
       {/* Status card section */}
       <div>
