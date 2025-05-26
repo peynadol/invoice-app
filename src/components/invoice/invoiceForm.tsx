@@ -1,19 +1,34 @@
 "use client";
-
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { invoiceSchema } from "@/lib/schemas/invoiceSchema";
 import { z } from "zod";
 import InvoiceFormItemList from "./invoiceFormItemList";
-import NewInvoiceFooter from "./newInvoiceFooter";
 
 type InvoiceFormValues = z.infer<typeof invoiceSchema>;
 
-const InvoiceForm = () => {
+type Props = {
+  initialData?: InvoiceFormValues;
+  invoiceId?: string;
+};
+
+const InvoiceForm = ({ initialData, invoiceId }: Props) => {
   const methods = useForm<InvoiceFormValues>({
     resolver: zodResolver(invoiceSchema),
-    defaultValues: {
+    defaultValues: initialData || {
+      billerStreetAddress: "",
+      billerCity: "",
+      billerPostcode: "",
+      billerCountry: "",
+      clientName: "",
+      clientEmail: "",
+      clientStreetAddress: "",
+      clientCity: "",
+      clientPostcode: "",
+      clientCountry: "",
       invoiceDate: new Date(),
+      paymentTerms: 30,
+      projectDescription: "",
       items: [{ name: "", quantity: 1, price: 0 }],
     },
   });
@@ -27,6 +42,7 @@ const InvoiceForm = () => {
   const onSubmit = (data: InvoiceFormValues) => {
     console.log("Invoice submitted:", data);
   };
+  console.log(initialData);
 
   return (
     <FormProvider {...methods}>
@@ -35,7 +51,9 @@ const InvoiceForm = () => {
         autoComplete="off"
         className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow space-y-10"
       >
-        <h1 className="text-2xl font-bold text-[#0C0E16]">New Invoice</h1>
+        <h1 className="text-2xl font-bold text-[#0C0E16]">
+          {initialData ? `Edit #${invoiceId}` : "New Invoice"}
+        </h1>
 
         {/* BILL FROM */}
         <div className="space-y-6">

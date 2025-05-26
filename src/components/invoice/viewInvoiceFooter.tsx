@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useInvoiceStore } from "@/store/invoiceStore";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 type Props = {
@@ -18,6 +19,7 @@ type Props = {
 };
 
 const ViewInvoiceFooter = ({ invoiceId, status }: Props) => {
+  const router = useRouter();
   const deleteInvoice = useInvoiceStore((state) => state.deleteInvoice);
   const updateInvoiceStatus = useInvoiceStore(
     (state) => state.updateInvoiceStatus
@@ -38,7 +40,13 @@ const ViewInvoiceFooter = ({ invoiceId, status }: Props) => {
 
   return (
     <div className="flex justify-between gap-2 p-6 bg-background border-t">
-      <Button variant="outline">Edit</Button>
+      <Button
+        variant="outline"
+        onClick={() => router.push(`/invoices/${invoiceId}/edit`)}
+        disabled={status === "paid"}
+      >
+        Edit
+      </Button>
 
       {/* Dialog for delete confirmation */}
       <Dialog>
