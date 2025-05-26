@@ -1,382 +1,147 @@
-//TODO: change quantity and price to number inputs
 "use client";
-import { useForm } from "react-hook-form";
+
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { Calendar as CalendarIcon } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useRouter } from "next/navigation";
-import { useInvoiceStore } from "@/store/invoiceStore";
+import { invoiceSchema } from "@/lib/schemas/invoiceSchema";
+import { z } from "zod";
+import InvoiceFormItemList from "./invoiceFormItemList";
 
-const formSchema = z.object({
-  fromStreetAddress: z.string().min(1),
-  fromCity: z.string().min(1),
-  fromPostcode: z.string().min(1),
-  fromCountry: z.string().min(1),
-  clientName: z.string().min(1),
-  clientEmail: z.string().min(1),
-  clientStreetAddress: z.string().min(1),
-  clientCity: z.string().min(1),
-  clientPostcode: z.string().min(1),
-  clientCountry: z.string().min(1),
-  invoiceDate: z.coerce.date(),
-  paymentTerms: z.enum(["7", "14", "30"]),
-  projectDescription: z.string().min(1),
-  itemName: z.string().min(1),
-  quantity: z.number().min(1, "Quantity must be at least 1"),
-  itemPrice: z.number().min(0.01, "Price must be at least 0.01"),
-});
+type InvoiceFormValues = z.infer<typeof invoiceSchema>;
 
-export default function InvoiceForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+const InvoiceForm = () => {
+  const methods = useForm<InvoiceFormValues>({
+    resolver: zodResolver(invoiceSchema),
     defaultValues: {
       invoiceDate: new Date(),
+      items: [{ name: "", quantity: 1, price: 0 }],
     },
   });
 
-  const addInvoice = useInvoiceStore((state) => state.addInvoice);
-  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = methods;
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    const createdAt = new Date();
-    const paymentTermsDays = parseInt(values.paymentTerms, 10);
-    const paymentDue = new Date(createdAt);
-    paymentDue.setDate(createdAt.getDate() + paymentTermsDays);
-
-    const newInvoice = {
-      createdAt: createdAt.toISOString(),
-      paymentDue: paymentDue.toISOString(),
-      description: values.projectDescription,
-      paymentTerms: paymentTermsDays,
-      clientName: values.clientName,
-      clientEmail: values.clientEmail,
-      status: "pending", // you can change this later with a separate button
-      senderAddress: {
-        street: values.fromStreetAddress,
-        city: values.fromCity,
-        postCode: values.fromPostcode,
-        country: values.fromCountry,
-      },
-      clientAddress: {
-        street: values.clientStreetAddress,
-        city: values.clientCity,
-        postCode: values.clientPostcode,
-        country: values.clientCountry,
-      },
-      items: [
-        {
-          name: values.itemName,
-          quantity: parseInt(values.quantity),
-          price: parseFloat(values.itemPrice),
-          total: parseInt(values.quantity) * parseFloat(values.itemPrice),
-        },
-      ],
-      total: parseInt(values.quantity) * parseFloat(values.itemPrice),
-    };
-
-    addInvoice(newInvoice);
-    router.push("/invoices");
-  }
+  const onSubmit = (data: InvoiceFormValues) => {
+    console.log("Invoice submitted:", data);
+    console.log(errors);
+  };
 
   return (
-    <>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 max-w-3xl mx-auto py-10"
+    <FormProvider {...methods}>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        autoComplete="off"
+        className="space-y-6"
+      >
+        <h1 className="text-2xl font-bold">New Invoice</h1>
+
+        <h2 className="text-lg font-semibold text-purple-600">Bill From</h2>
+
+        <div>
+          <label>Street Address</label>
+          <input {...register("billerStreetAddress")} />
+          {errors.billerStreetAddress && (
+            <p>{errors.billerStreetAddress.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label>City</label>
+          <input {...register("billerCity")} />
+          {errors.billerCity && <p>{errors.billerCity.message}</p>}
+        </div>
+
+        <div>
+          <label>Post Code</label>
+          <input {...register("billerPostcode")} />
+          {errors.billerPostcode && <p>{errors.billerPostcode.message}</p>}
+        </div>
+
+        <div>
+          <label>Country</label>
+          <input {...register("billerCountry")} />
+          {errors.billerCountry && <p>{errors.billerCountry.message}</p>}
+        </div>
+
+        <h2 className="text-lg font-semibold text-purple-600">Bill To</h2>
+
+        <div>
+          <label>Client's Name</label>
+          <input {...register("clientName")} />
+          {errors.clientName && <p>{errors.clientName.message}</p>}
+        </div>
+
+        <div>
+          <label>Client's Email</label>
+          <input {...register("clientEmail")} />
+          {errors.clientEmail && <p>{errors.clientEmail.message}</p>}
+        </div>
+
+        <div>
+          <label>Street Address</label>
+          <input {...register("clientStreetAddress")} />
+          {errors.clientStreetAddress && (
+            <p>{errors.clientStreetAddress.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label>City</label>
+          <input {...register("clientCity")} />
+          {errors.clientCity && <p>{errors.clientCity.message}</p>}
+        </div>
+
+        <div>
+          <label>Post Code</label>
+          <input {...register("clientPostcode")} />
+          {errors.clientPostcode && <p>{errors.clientPostcode.message}</p>}
+        </div>
+
+        <div>
+          <label>Country</label>
+          <input {...register("clientCountry")} />
+          {errors.clientCountry && <p>{errors.clientCountry.message}</p>}
+        </div>
+
+        <div>
+          <label>Invoice Date</label>
+          <input type="date" {...register("invoiceDate")} />
+          {errors.invoiceDate && <p>{errors.invoiceDate.message}</p>}
+        </div>
+
+        <div>
+          <label>Payment Terms</label>
+          <select {...register("paymentTerms", { valueAsNumber: true })}>
+            <option value="">Select</option>
+            <option value={1}>Net 1 Day</option>
+            <option value={7}>Net 7 Days</option>
+            <option value={14}>Net 14 Days</option>
+            <option value={30}>Net 30 Days</option>
+          </select>
+          {errors.paymentTerms && <p>{errors.paymentTerms.message}</p>}
+        </div>
+
+        <div>
+          <label>Project Description</label>
+          <input {...register("projectDescription")} />
+          {errors.projectDescription && (
+            <p>{errors.projectDescription.message}</p>
+          )}
+        </div>
+
+        <InvoiceFormItemList />
+
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 rounded"
         >
-          {/* Sender Address */}
-          <h2 className="text-lg font-semibold">Bill From</h2>
-          <FormField
-            name="fromStreetAddress"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Street Address</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
-              name="fromCity"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>City</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="fromPostcode"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Post Code</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <FormField
-            name="fromCountry"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Country</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Client Info */}
-          <h2 className="text-lg font-semibold">Bill To</h2>
-          <FormField
-            name="clientName"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Client's Name</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="clientEmail"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Client's Email</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="clientStreetAddress"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Street Address</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
-              name="clientCity"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>City</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="clientPostcode"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Post Code</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <FormField
-            name="clientCountry"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Country</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Invoice Metadata */}
-          <h2 className="text-lg font-semibold">Invoice Details</h2>
-          <FormField
-            name="invoiceDate"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Invoice Date</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "w-[240px] pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {" "}
-                        {field.value ? (
-                          format(field.value, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="paymentTerms"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Payment Terms</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="7">Net 7 Days</SelectItem>
-                    <SelectItem value="14">Net 14 Days</SelectItem>
-                    <SelectItem value="30">Net 30 Days</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="projectDescription"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Project Description</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Item Info */}
-          <h2 className="text-lg font-semibold">Item List</h2>
-          <FormField
-            name="itemName"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Item Name</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
-              name="quantity"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Quantity</FormLabel>
-                  <FormControl>
-                    <Input type="number" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="itemPrice"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Price</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <Button type="submit">Submit</Button>
-        </form>
-      </Form>
-    </>
+          Submit Invoice
+        </button>
+      </form>
+    </FormProvider>
   );
-}
+};
+
+export default InvoiceForm;
