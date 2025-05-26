@@ -32,18 +32,29 @@ const InvoiceListPage = () => {
 
   return (
     <div className="space-y-4 pb-20">
-      <InvoiceToolbar
-        count={invoices.length}
-        selected={selectedStatuses}
-        toggleStatus={toggleStatus}
-      />
-      {filteredInvoices.map((invoice) => (
-        <InvoiceCard
-          key={invoice.id}
-          invoice={invoice}
-          onClick={() => viewInvoiceClickHandler(invoice.id)}
+      {/* Show toolbar only if there's something to filter */}
+      {invoices.length > 0 && (
+        <InvoiceToolbar
+          count={invoices.length}
+          selected={selectedStatuses}
+          toggleStatus={toggleStatus}
         />
-      ))}
+      )}
+
+      {/* No invoices at all */}
+      {invoices.length === 0 ? (
+        <EmptyInvoices />
+      ) : filteredInvoices.length === 0 ? (
+        <EmptyInvoices />
+      ) : (
+        filteredInvoices.map((invoice) => (
+          <InvoiceCard
+            key={invoice.id}
+            invoice={invoice}
+            onClick={() => viewInvoiceClickHandler(invoice.id)}
+          />
+        ))
+      )}
     </div>
   );
 };

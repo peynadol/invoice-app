@@ -1,20 +1,22 @@
 import React from "react";
 import Image from "next/image";
 import emptyLogo from "../../../public/illustration-empty.svg";
-// TODO: conditionally render this on empty invoices
 const EmptyInvoices = () => {
   return (
-    <div>
+    <section className="wrapper text-center">
       <Image
         src={emptyLogo}
         alt="Empty Invoices"
         width={300}
         height={300}
-        className="mx-auto mt-10"
+        className="mx-auto mt-10 pb-4"
       />
-      <h2>There is nothing here</h2>
-      <p>Create an invoice by clicking the New button and get started</p>
-    </div>
+      <h2 className="text-[24px] font-bold pb-2">There is nothing here</h2>
+      <p className="text-[#888DB0] max-w-[250px] mx-auto">
+        Create an invoice by clicking the <span className="font-bold">New</span>{" "}
+        button and get started
+      </p>
+    </section>
   );
 };
 
