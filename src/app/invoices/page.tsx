@@ -31,7 +31,7 @@ const InvoiceListPage = () => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pb-20">
       <InvoiceToolbar
         count={invoices.length}
         selected={selectedStatuses}

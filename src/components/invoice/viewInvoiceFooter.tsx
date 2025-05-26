@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useInvoiceStore } from "@/store/invoiceStore";
+import { toast } from "sonner";
 
 type Props = {
   invoiceId: string;
@@ -29,6 +30,9 @@ const ViewInvoiceFooter = ({ invoiceId, status }: Props) => {
   const handleMarkAsPaid = () => {
     if (status !== "paid") {
       updateInvoiceStatus(invoiceId, "paid");
+      toast.success("Invoice marked as paid successfully!", {
+        duration: 2000,
+      });
     }
   };
 
