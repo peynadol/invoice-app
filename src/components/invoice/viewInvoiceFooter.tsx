@@ -13,13 +13,23 @@ import { useInvoiceStore } from "@/store/invoiceStore";
 
 type Props = {
   invoiceId: string;
+  status: string;
 };
 
-const ViewInvoiceFooter = ({ invoiceId }: Props) => {
+const ViewInvoiceFooter = ({ invoiceId, status }: Props) => {
   const deleteInvoice = useInvoiceStore((state) => state.deleteInvoice);
+  const updateInvoiceStatus = useInvoiceStore(
+    (state) => state.updateInvoiceStatus
+  );
 
   const handleDelete = () => {
     deleteInvoice(invoiceId);
+  };
+
+  const handleMarkAsPaid = () => {
+    if (status !== "paid") {
+      updateInvoiceStatus(invoiceId, "paid");
+    }
   };
 
   return (
@@ -50,7 +60,11 @@ const ViewInvoiceFooter = ({ invoiceId }: Props) => {
         </DialogContent>
       </Dialog>
 
-      <Button className="bg-purple-600 text-white hover:bg-purple-700">
+      <Button
+        className="bg-purple-600 text-white hover:bg-purple-700"
+        onClick={handleMarkAsPaid}
+        disabled={status === "paid"}
+      >
         Mark as Paid
       </Button>
     </div>

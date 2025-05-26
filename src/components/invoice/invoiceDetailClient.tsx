@@ -27,7 +27,7 @@ const InvoiceDetailClient = ({ id }: Props) => {
   return (
     <div className="space-y-6">
       <ViewInvoice invoice={invoice} />
-      <ViewInvoiceFooter invoiceId={invoice.id} />
+      <ViewInvoiceFooter invoiceId={invoice.id} status={invoice.status} />
     </div>
   );
 };
