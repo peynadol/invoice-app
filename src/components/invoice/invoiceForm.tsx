@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { invoiceSchema } from "@/lib/schemas/invoiceSchema";
 import { z } from "zod";
 import InvoiceFormItemList from "./invoiceFormItemList";
+import NewInvoiceFooter from "./newInvoiceFooter";
 
 type InvoiceFormValues = z.infer<typeof invoiceSchema>;
 
@@ -25,7 +26,6 @@ const InvoiceForm = () => {
 
   const onSubmit = (data: InvoiceFormValues) => {
     console.log("Invoice submitted:", data);
-    console.log(errors);
   };
 
   return (
@@ -33,112 +33,235 @@ const InvoiceForm = () => {
       <form
         onSubmit={handleSubmit(onSubmit)}
         autoComplete="off"
-        className="space-y-6"
+        className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow space-y-10"
       >
-        <h1 className="text-2xl font-bold">New Invoice</h1>
+        <h1 className="text-2xl font-bold text-[#0C0E16]">New Invoice</h1>
 
-        <h2 className="text-lg font-semibold text-purple-600">Bill From</h2>
+        {/* BILL FROM */}
+        <div className="space-y-6">
+          <h2 className="text-[#7C5DFA] text-sm font-bold tracking-wide uppercase">
+            Bill From
+          </h2>
 
-        <div>
-          <label>Street Address</label>
-          <input {...register("billerStreetAddress")} />
-          {errors.billerStreetAddress && (
-            <p>{errors.billerStreetAddress.message}</p>
-          )}
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">
+              Street Address
+            </label>
+            <input
+              {...register("billerStreetAddress")}
+              className="w-full border rounded-md px-4 py-2"
+            />
+            {errors.billerStreetAddress && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.billerStreetAddress.message}
+              </p>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block mb-1 text-sm font-medium text-gray-700">
+                City
+              </label>
+              <input
+                {...register("billerCity")}
+                className="w-full border rounded-md px-4 py-2"
+              />
+              {errors.billerCity && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.billerCity.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <label className="block mb-1 text-sm font-medium text-gray-700">
+                Post Code
+              </label>
+              <input
+                {...register("billerPostcode")}
+                className="w-full border rounded-md px-4 py-2"
+              />
+              {errors.billerPostcode && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.billerPostcode.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">
+              Country
+            </label>
+            <input
+              {...register("billerCountry")}
+              className="w-full border rounded-md px-4 py-2"
+            />
+            {errors.billerCountry && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.billerCountry.message}
+              </p>
+            )}
+          </div>
         </div>
 
-        <div>
-          <label>City</label>
-          <input {...register("billerCity")} />
-          {errors.billerCity && <p>{errors.billerCity.message}</p>}
+        {/* BILL TO */}
+        <div className="space-y-6">
+          <h2 className="text-[#7C5DFA] text-sm font-bold tracking-wide uppercase">
+            Bill To
+          </h2>
+
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">
+              Client's Name
+            </label>
+            <input
+              {...register("clientName")}
+              className="w-full border rounded-md px-4 py-2"
+            />
+            {errors.clientName && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.clientName.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">
+              Client's Email
+            </label>
+            <input
+              {...register("clientEmail")}
+              className="w-full border rounded-md px-4 py-2"
+            />
+            {errors.clientEmail && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.clientEmail.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">
+              Street Address
+            </label>
+            <input
+              {...register("clientStreetAddress")}
+              className="w-full border rounded-md px-4 py-2"
+            />
+            {errors.clientStreetAddress && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.clientStreetAddress.message}
+              </p>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block mb-1 text-sm font-medium text-gray-700">
+                City
+              </label>
+              <input
+                {...register("clientCity")}
+                className="w-full border rounded-md px-4 py-2"
+              />
+              {errors.clientCity && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.clientCity.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <label className="block mb-1 text-sm font-medium text-gray-700">
+                Post Code
+              </label>
+              <input
+                {...register("clientPostcode")}
+                className="w-full border rounded-md px-4 py-2"
+              />
+              {errors.clientPostcode && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.clientPostcode.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">
+              Country
+            </label>
+            <input
+              {...register("clientCountry")}
+              className="w-full border rounded-md px-4 py-2"
+            />
+            {errors.clientCountry && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.clientCountry.message}
+              </p>
+            )}
+          </div>
         </div>
 
-        <div>
-          <label>Post Code</label>
-          <input {...register("billerPostcode")} />
-          {errors.billerPostcode && <p>{errors.billerPostcode.message}</p>}
+        {/* INVOICE MAIN */}
+        <div className="space-y-6">
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">
+              Invoice Date
+            </label>
+            <input
+              type="date"
+              {...register("invoiceDate")}
+              className="w-full border rounded-md px-4 py-2 appearance-none"
+            />
+            {errors.invoiceDate && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.invoiceDate.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">
+              Payment Terms
+            </label>
+            <select
+              {...register("paymentTerms", { valueAsNumber: true })}
+              className="w-full border rounded-md px-4 py-2"
+            >
+              <option value="">Select</option>
+              <option value={1}>Net 1 Day</option>
+              <option value={7}>Net 7 Days</option>
+              <option value={14}>Net 14 Days</option>
+              <option value={30}>Net 30 Days</option>
+            </select>
+            {errors.paymentTerms && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.paymentTerms.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">
+              Project Description
+            </label>
+            <input
+              {...register("projectDescription")}
+              className="w-full border rounded-md px-4 py-2"
+            />
+            {errors.projectDescription && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.projectDescription.message}
+              </p>
+            )}
+          </div>
         </div>
 
-        <div>
-          <label>Country</label>
-          <input {...register("billerCountry")} />
-          {errors.billerCountry && <p>{errors.billerCountry.message}</p>}
-        </div>
-
-        <h2 className="text-lg font-semibold text-purple-600">Bill To</h2>
-
-        <div>
-          <label>Client's Name</label>
-          <input {...register("clientName")} />
-          {errors.clientName && <p>{errors.clientName.message}</p>}
-        </div>
-
-        <div>
-          <label>Client's Email</label>
-          <input {...register("clientEmail")} />
-          {errors.clientEmail && <p>{errors.clientEmail.message}</p>}
-        </div>
-
-        <div>
-          <label>Street Address</label>
-          <input {...register("clientStreetAddress")} />
-          {errors.clientStreetAddress && (
-            <p>{errors.clientStreetAddress.message}</p>
-          )}
-        </div>
-
-        <div>
-          <label>City</label>
-          <input {...register("clientCity")} />
-          {errors.clientCity && <p>{errors.clientCity.message}</p>}
-        </div>
-
-        <div>
-          <label>Post Code</label>
-          <input {...register("clientPostcode")} />
-          {errors.clientPostcode && <p>{errors.clientPostcode.message}</p>}
-        </div>
-
-        <div>
-          <label>Country</label>
-          <input {...register("clientCountry")} />
-          {errors.clientCountry && <p>{errors.clientCountry.message}</p>}
-        </div>
-
-        <div>
-          <label>Invoice Date</label>
-          <input type="date" {...register("invoiceDate")} />
-          {errors.invoiceDate && <p>{errors.invoiceDate.message}</p>}
-        </div>
-
-        <div>
-          <label>Payment Terms</label>
-          <select {...register("paymentTerms", { valueAsNumber: true })}>
-            <option value="">Select</option>
-            <option value={1}>Net 1 Day</option>
-            <option value={7}>Net 7 Days</option>
-            <option value={14}>Net 14 Days</option>
-            <option value={30}>Net 30 Days</option>
-          </select>
-          {errors.paymentTerms && <p>{errors.paymentTerms.message}</p>}
-        </div>
-
-        <div>
-          <label>Project Description</label>
-          <input {...register("projectDescription")} />
-          {errors.projectDescription && (
-            <p>{errors.projectDescription.message}</p>
-          )}
-        </div>
-
+        {/* DYNAMIC ITEM LIST */}
         <InvoiceFormItemList />
 
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          Submit Invoice
-        </button>
+        {/* FOOTER ACTIONS */}
       </form>
     </FormProvider>
   );
