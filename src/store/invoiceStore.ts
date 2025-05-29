@@ -18,6 +18,7 @@ type InvoiceStore = {
   deleteInvoice: (id: string) => void;
   addInvoice: (invoice: Omit<Invoice, "id">) => void;
   updateInvoiceStatus: (id: string, status: string) => void;
+  updateInvoice: (id: string, updatedData: Omit<Invoice, "id">) => void;
 };
 
 export const useInvoiceStore = create<InvoiceStore>((set) => ({
@@ -38,10 +39,18 @@ export const useInvoiceStore = create<InvoiceStore>((set) => ({
         },
       ],
     })),
+
   updateInvoiceStatus: (id, status) =>
     set((state) => ({
       invoices: state.invoices.map((invoice) =>
         invoice.id === id ? { ...invoice, status } : invoice
+      ),
+    })),
+
+  updateInvoice: (id, updatedData) =>
+    set((state) => ({
+      invoices: state.invoices.map((invoice) =>
+        invoice.id === id ? { ...updatedData, id } : invoice
       ),
     })),
 }));

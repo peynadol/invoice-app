@@ -3,10 +3,11 @@
 import { useInvoiceStore } from "@/store/invoiceStore";
 import InvoiceForm from "@/components/invoice/invoiceForm";
 import { useParams, useRouter } from "next/navigation";
+import EditInvoiceFooter from "@/components/invoice/editInvoiceFooter";
+import { GoBackBar } from "@/components/invoice/goBackBar";
 
 const EditInvoicePage = () => {
   const { id } = useParams();
-  const router = useRouter();
   const invoice = useInvoiceStore((state) =>
     state.invoices.find((inv) => inv.id === id)
   );
@@ -35,6 +36,7 @@ const EditInvoicePage = () => {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
+      <GoBackBar />
       <InvoiceForm initialData={initialData} invoiceId={id} />
     </div>
   );
