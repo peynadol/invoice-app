@@ -1,8 +1,6 @@
 import logo from "../../../public/logo.svg";
 import userAvatar from "../../../public/image-avatar.jpg";
 import Image from "next/image";
-import { Toggle } from "@/components/ui/toggle";
-import { Moon } from "lucide-react";
 import Link from "next/link";
 const Header = () => {
   return (
@@ -19,9 +17,6 @@ const Header = () => {
         </Link>
       </div>
       <div className="flex items-center p-4 gap-4">
-        <Toggle size="lg">
-          <Moon className="fill-[#7E88C3] stroke-0 scale-150" />
-        </Toggle>
         <Image
           src={userAvatar}
           alt="User Avatar"
