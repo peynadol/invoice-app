@@ -1,5 +1,4 @@
 "use client";
-// TODO: resolve error when submitting. think i need to 're-nest' the form structure
 
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,6 +7,8 @@ import { z } from "zod";
 import InvoiceFormItemList from "./invoiceFormItemList";
 import { useInvoiceStore } from "@/store/invoiceStore";
 import { toast } from "sonner";
+import { useState } from "react";
+import NewInvoiceFooter from "./newInvoiceFooter";
 
 type InvoiceFormValues = z.infer<typeof invoiceSchema>;
 
@@ -18,23 +19,31 @@ type Props = {
 
 const InvoiceForm = ({ initialData, invoiceId }: Props) => {
   const updateInvoice = useInvoiceStore((state) => state.updateInvoice);
+  const addInvoice = useInvoiceStore((state) => state.addInvoice);
+  const [formAction, setFormAction] = useState<"draft" | "pending">("pending");
 
   const methods = useForm<InvoiceFormValues>({
     resolver: zodResolver(invoiceSchema),
     defaultValues: initialData || {
-      billerStreetAddress: "",
-      billerCity: "",
-      billerPostcode: "",
-      billerCountry: "",
-      clientName: "",
-      clientEmail: "",
-      clientStreetAddress: "",
-      clientCity: "",
-      clientPostcode: "",
-      clientCountry: "",
+      senderAddress: {
+        street: "",
+        city: "",
+        postCode: "",
+        country: "",
+      },
+      clientAddress: {
+        street: "",
+        city: "",
+        postCode: "",
+        country: "",
+      },
+      client: {
+        name: "",
+        email: "",
+      },
+      description: "",
       invoiceDate: new Date(),
       paymentTerms: 30,
-      projectDescription: "",
       items: [{ name: "", quantity: 1, price: 0 }],
     },
   });
@@ -47,21 +56,45 @@ const InvoiceForm = ({ initialData, invoiceId }: Props) => {
   } = methods;
 
   const onSubmit = (data: InvoiceFormValues) => {
+    const itemsWithTotal = data.items.map((item) => ({
+      ...item,
+      total: item.quantity * item.price,
+    }));
+
+    const total = itemsWithTotal.reduce((acc, item) => acc + item.total, 0);
+
+    const paymentDue = new Date(data.invoiceDate);
+    paymentDue.setDate(paymentDue.getDate() + data.paymentTerms);
+
+    const finalData = {
+      ...data,
+      items: itemsWithTotal,
+      total,
+      status: formAction,
+      paymentDue,
+    };
+
     if (initialData && invoiceId) {
-      updateInvoice(invoiceId, data);
-      toast.success("Invoice updated successfully!", { duration: 2000 });
+      updateInvoice(invoiceId, finalData);
+      toast.success("Invoice updated successfully!");
     } else {
-      console.log("New Invoice Data:", data);
+      addInvoice(finalData);
+      toast.success("Invoice created successfully!");
     }
 
     const updatedInvoices = useInvoiceStore.getState().invoices;
     localStorage.setItem("invoices", JSON.stringify(updatedInvoices));
+    window.history.back();
+    console.log(finalData);
   };
 
   return (
     <FormProvider {...methods}>
       <form
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={(e) => {
+          setFormAction("pending");
+          handleSubmit(onSubmit)(e);
+        }}
         autoComplete="off"
         className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow space-y-10"
       >
@@ -76,31 +109,31 @@ const InvoiceForm = ({ initialData, invoiceId }: Props) => {
           </h2>
 
           <input
-            {...register("billerStreetAddress")}
+            {...register("senderAddress.street")}
             placeholder="Street Address"
             className="w-full border rounded-md px-4 py-2"
           />
-          {errors.billerStreetAddress && (
+          {errors.senderAddress?.street && (
             <p className="text-red-500 text-sm">
-              {errors.billerStreetAddress.message}
+              {errors.senderAddress.street.message}
             </p>
           )}
 
           <div className="grid grid-cols-2 gap-4">
             <input
-              {...register("billerCity")}
+              {...register("senderAddress.city")}
               placeholder="City"
               className="w-full border rounded-md px-4 py-2"
             />
             <input
-              {...register("billerPostcode")}
+              {...register("senderAddress.postCode")}
               placeholder="Post Code"
               className="w-full border rounded-md px-4 py-2"
             />
           </div>
 
           <input
-            {...register("billerCountry")}
+            {...register("senderAddress.country")}
             placeholder="Country"
             className="w-full border rounded-md px-4 py-2"
           />
@@ -113,36 +146,37 @@ const InvoiceForm = ({ initialData, invoiceId }: Props) => {
           </h2>
 
           <input
-            {...register("clientName")}
+            {...register("client.name")}
             placeholder="Client's Name"
             className="w-full border rounded-md px-4 py-2"
           />
           <input
-            {...register("clientEmail")}
+            {...register("client.email")}
             placeholder="Client's Email"
             className="w-full border rounded-md px-4 py-2"
           />
+
           <input
-            {...register("clientStreetAddress")}
+            {...register("clientAddress.street")}
             placeholder="Street Address"
             className="w-full border rounded-md px-4 py-2"
           />
 
           <div className="grid grid-cols-2 gap-4">
             <input
-              {...register("clientCity")}
+              {...register("clientAddress.city")}
               placeholder="City"
               className="w-full border rounded-md px-4 py-2"
             />
             <input
-              {...register("clientPostcode")}
+              {...register("clientAddress.postCode")}
               placeholder="Post Code"
               className="w-full border rounded-md px-4 py-2"
             />
           </div>
 
           <input
-            {...register("clientCountry")}
+            {...register("clientAddress.country")}
             placeholder="Country"
             className="w-full border rounded-md px-4 py-2"
           />
@@ -168,7 +202,7 @@ const InvoiceForm = ({ initialData, invoiceId }: Props) => {
           </select>
 
           <input
-            {...register("projectDescription")}
+            {...register("description")}
             placeholder="Project Description"
             className="w-full border rounded-md px-4 py-2"
           />
@@ -178,28 +212,20 @@ const InvoiceForm = ({ initialData, invoiceId }: Props) => {
         <InvoiceFormItemList />
 
         {/* --- FOOTER --- */}
-        <div className="flex justify-end gap-4 pt-8">
-          <button
-            type="button"
-            onClick={() => {
-              if (initialData) {
-                window.history.back();
-              } else {
-                reset();
-              }
-            }}
-            className="px-4 py-2 border border-gray-300 rounded-md text-sm"
-          >
-            Cancel
-          </button>
-
-          <button
-            type="submit"
-            className="px-6 py-2 bg-[#7C5DFA] text-white rounded-md hover:bg-[#9277FF] text-sm font-semibold"
-          >
-            {initialData ? "Save Changes" : "Create Invoice"}
-          </button>
-        </div>
+        <NewInvoiceFooter
+          onDiscard={() => {
+            if (initialData) {
+              window.history.back();
+            } else {
+              reset();
+            }
+          }}
+          onSaveDraft={() => {
+            setFormAction("draft");
+            document.querySelector("form")?.requestSubmit();
+          }}
+          isSubmitting={methods.formState.isSubmitting}
+        />
       </form>
     </FormProvider>
   );

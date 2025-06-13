@@ -41,6 +41,7 @@ const ViewInvoiceFooter = ({ invoiceId, status }: Props) => {
   return (
     <div className="flex justify-between gap-2 p-6 bg-background border-t">
       <Button
+        className="cursor-pointer"
         variant="outline"
         onClick={() => router.push(`/invoices/${invoiceId}/edit`)}
         disabled={status === "paid"}
@@ -51,7 +52,9 @@ const ViewInvoiceFooter = ({ invoiceId, status }: Props) => {
       {/* Dialog for delete confirmation */}
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="destructive">Delete</Button>
+          <Button variant="destructive" className="cursor-pointer">
+            Delete
+          </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -63,9 +66,15 @@ const ViewInvoiceFooter = ({ invoiceId, status }: Props) => {
           </p>
           <DialogFooter className="mt-4">
             <DialogTrigger asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline" className="cursor-pointer">
+                Cancel
+              </Button>
             </DialogTrigger>
-            <Button variant="destructive" onClick={handleDelete}>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              className="cursor-pointer"
+            >
               Confirm Delete
             </Button>
           </DialogFooter>
@@ -73,7 +82,7 @@ const ViewInvoiceFooter = ({ invoiceId, status }: Props) => {
       </Dialog>
 
       <Button
-        className="bg-purple-600 text-white hover:bg-purple-700"
+        className="bg-purple-600 text-white hover:bg-purple-700 cursor-pointer"
         onClick={handleMarkAsPaid}
         disabled={status === "paid"}
       >

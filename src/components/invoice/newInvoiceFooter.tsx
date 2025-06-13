@@ -11,7 +11,7 @@ type Props = {
 
 const NewInvoiceFooter = ({ onDiscard, onSaveDraft, isSubmitting }: Props) => {
   return (
-    <footer className="w-full bg-white border-t shadow-md z-50">
+    <footer className="w-full bg-white border-t  z-50">
       <div className="w-full px-6 py-4 flex flex-wrap sm:flex-nowrap justify-between items-center gap-x-2 gap-y-4">
         {/* Discard icon */}
         <div className="flex-shrink-0">

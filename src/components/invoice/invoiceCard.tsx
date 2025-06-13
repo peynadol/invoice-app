@@ -30,7 +30,7 @@ const InvoiceCard = ({ invoice, onClick }) => {
       {/* Right side */}
       <div className="flex flex-col items-end gap-2 text-right">
         <p className="text-sm text-[#7E88C3] font-semibold">
-          {invoice.clientName}
+          {invoice.client?.name || invoice.clientName}
         </p>
         {/* Status pill*/}
         <StatusPill status={invoice.status} />

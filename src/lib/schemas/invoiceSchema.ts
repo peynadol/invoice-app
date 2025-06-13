@@ -1,37 +1,40 @@
 import { z } from "zod";
 
-enum paymentTerms {
-  "Net 1 Day" = 1,
-  "Net 7 Days" = 7,
-  "Net 14 Days" = 14,
-  "Net 30 Days" = 30,
-}
+export const addressSchema = z.object({
+  street: z.string().min(1, "Street is required"),
+  city: z.string().min(1, "City is required"),
+  postCode: z.string().min(1, "Postcode is required"),
+  country: z.string().min(1, "Country is required"),
+});
+
+export const itemSchema = z.object({
+  name: z.string().min(1, "Item name is required"),
+  quantity: z.number().min(1, "Must be at least 1"),
+  price: z.number().min(0.01, "Price must be at least £0.01"),
+  total: z.number().optional(), // computed
+});
 
 export const invoiceSchema = z.object({
-  billerStreetAddress: z.string().min(1, "Biller street address is required"),
-  billerCity: z.string().min(1, "Biller city is required"),
-  billerPostcode: z.string().min(1, "Biller postcode is required"),
-  billerCountry: z.string().min(1, "Biller country is required"),
-  clientName: z.string().min(1, "Client name is required"),
-  clientEmail: z.string().email("Invalid email address"),
-  clientStreetAddress: z.string().min(1, "Client street address is required"),
-  clientCity: z.string().min(1, "Client city is required"),
-  clientPostcode: z.string().min(1, "Client postcode is required"),
-  clientCountry: z.string().min(1, "Client country is required"),
-  invoiceDate: z.coerce.date({
-    errorMap: () => ({ message: "Invoice date is required" }),
+  senderAddress: addressSchema,
+  clientAddress: addressSchema,
+
+  client: z.object({
+    name: z.string().min(1, "Client name is required"),
+    email: z.string().email("Invalid email address"),
   }),
-  paymentTerms: z.nativeEnum(paymentTerms, {
-    errorMap: () => ({ message: "Payment terms is required" }),
-  }),
-  projectDescription: z.string().min(1, "Description is required"),
-  items: z
-    .array(
-      z.object({
-        name: z.string().min(1),
-        quantity: z.number().min(1),
-        price: z.number().min(0.01),
-      })
-    )
-    .min(1, "At least one item is required"),
+
+  description: z.string().min(1, "Project description is required"),
+  invoiceDate: z.coerce.date(),
+  paymentTerms: z.union([
+    z.literal(1),
+    z.literal(7),
+    z.literal(14),
+    z.literal(30),
+  ]),
+
+  items: z.array(itemSchema).min(1, "At least one item is required"),
+  status: z.enum(["draft", "pending", "paid"]).optional(),
+  total: z.number().optional(),
+  createdAt: z.string().optional(),
+  paymentDue: z.string().optional(),
 });
