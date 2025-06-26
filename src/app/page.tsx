@@ -1,6 +1,4 @@
-import InvoiceCard from "@/components/invoice/invoiceCard";
-import InvoiceToolbar from "@/components/invoice/invoiceToolbar";
-import ViewIncoice from "@/components/invoice/viewInvoice";
+import { redirect } from "next/navigation";
 export default function Home() {
-  return <div></div>;
+  redirect("/invoices");
 }
